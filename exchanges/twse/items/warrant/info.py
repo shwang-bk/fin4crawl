@@ -14,8 +14,16 @@ class WarrantInfoItem(scrapy.Item):
     listing_date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.p_date_minguo))  # 上市日期
     close_date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.p_date_minguo))  # 最後交易日
     delivery_date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.p_date_minguo))  # 到期日
-    shares_publish = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, int))  # 權證發行數量
+    publish_shares = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, int))  # 權證發行數量
     underlying = scrapy.Field()  # 標的代號
     underlying_price = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, float))  # 標的收盤價格/收盤指數/期貨結算價
     exercise_ratio = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, float, lambda x: x / float(1000.0)))  # 行使比例
     strike_price = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, float))  # 最新履約價格
+
+    class Meta:
+        name = 'twse_warrant_info'
+        fields = [
+            'code', 'name', 'style', 'put_call', 'broker', None, 'price', 'listing_date',
+            'close_date', 'delivery_date', None, 'publish_shares', 'underlying', None,
+            'underlying_price', 'exercise_ratio', 'strike_price'
+        ]

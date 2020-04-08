@@ -5,11 +5,11 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, SelectJmes
 
-from exchanges.twse.items import StockChipItem
+from exchanges.twse.items import InvestorTradingItem
 
 
-class StockChipSpider(scrapy.Spider):
-    name = 'twse_stock_chip'
+class InvestorTradingSpider(scrapy.Spider):
+    name = 'twse_investor_trading'
     allowed_domains = ['www.twse.com.tw']
     date = datetime.date.today().strftime("%Y%m%d")
 
@@ -22,17 +22,17 @@ class StockChipSpider(scrapy.Spider):
 
     def parse(self, response):
         self.logger.info('%s', response.url)
-        terms = StockChipItem.terms()
+        fields = InvestorTradingItem.Meta.fields
         jresp = json.loads(response.body_as_unicode())
         data = SelectJmes('data')(jresp)
         if not data:
             return
         date = SelectJmes('date')(jresp)
         for row in data:
-            loader = ItemLoader(item=StockChipItem())
+            loader = ItemLoader(item=InvestorTradingItem())
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('date', date)
-            for idx, field in enumerate(terms):
+            for idx, field in enumerate(fields):
                 loader.add_value(field, SelectJmes(f'[{idx}]')(row))
             yield loader.load_item()

@@ -23,16 +23,14 @@ class WarrantInfoSpider(scrapy.Spider):
 
     def parse(self, response):
         self.logger.info('%s', response.url)
-        slots = ['code', 'name', 'style', 'put_call', 'broker', None, 'price', 'listing_date',
-                 'close_date', 'delivery_date', None, 'shares_publish', 'underlying', None,
-                 'underlying_price', 'exercise_ratio', 'strike_price']
+        fields = WarrantInfoItem.Meta.fields
         rows = response.xpath('//tr[count(td)=21]').extract()
         for row in rows:
             loader = ItemLoader(item=WarrantInfoItem(), selector=Selector(text=row))
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('date', self.date)
-            for idx, field in enumerate(slots, start=1):
+            for idx, field in enumerate(fields, start=1):
                 if field:
                     loader.add_xpath(field, f'//td[{idx}]/text()')
             yield loader.load_item()

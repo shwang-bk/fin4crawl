@@ -5,11 +5,11 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, SelectJmes
 
-from exchanges.twse.items import StockMarginItem
+from exchanges.twse.items import MarginTradingItem
 
 
-class StockMarginSpider(scrapy.Spider):
-    name = 'twse_stock_margin'
+class MarginTradingSpider(scrapy.Spider):
+    name = 'twse_margin_trading'
     allowed_domains = ['www.twse.com.tw']
     date = datetime.date.today().strftime("%Y%m%d")
 
@@ -22,14 +22,14 @@ class StockMarginSpider(scrapy.Spider):
 
     def parse(self, response):
         self.logger.info('%s', response.url)
-        terms = StockMarginItem.terms()
+        terms = MarginTradingItem.Meta.fields
         jresp = json.loads(response.body_as_unicode())
         data = SelectJmes('data')(jresp)
         if not data:
             return
         date = SelectJmes('date')(jresp)
         for row in data:
-            loader = ItemLoader(item=StockMarginItem())
+            loader = ItemLoader(item=MarginTradingItem())
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('date', date)
