@@ -95,6 +95,10 @@ AUTOTHROTTLE_MAX_DELAY = 60
 
 LOG_FILE = 'fin4crawl.log'
 LOG_LEVEL = 'INFO'
+
+DATABASE_URL = 'postgresql://postgres:fin4trade@localhost/market_db'
+
 FEED_EXPORTERS = {
     'sqlite': 'exchanges.exporters.SQLiteItemExporter',
+    'sql': 'exchanges.exporters.SQLItemExporter',
 }

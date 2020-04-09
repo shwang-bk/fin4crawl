@@ -5,11 +5,11 @@ from scrapy import Selector
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst
 
-from exchanges.twse.items import StockBasicItem
+from exchanges.twse.items import StockInfoItem
 
 
-class StockBasicSpider(scrapy.Spider):
-    name = 'twse_stock_basic'
+class StockInfoSpider(scrapy.Spider):
+    name = 'twse_stock_info'
     allowed_domains = ['mops.twse.com.tw']
     date = datetime.date.today().strftime("%Y%m%d")
     form = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1', 'TYPEK': 'sii', 'code': ''}
@@ -25,11 +25,11 @@ class StockBasicSpider(scrapy.Spider):
             ('code', '//td[1]/text()'),
             ('name', '//td[3]/text()'),
             ('listing_date', '//td[15]/text()'),
-            ('shares_publish', '//td[18]/text()')
+            ('publish_shares', '//td[18]/text()')
         ]
         rows = response.xpath('//tr[count(td)=39]').extract()
         for row in rows:
-            loader = ItemLoader(item=StockBasicItem(), selector=Selector(text=row))
+            loader = ItemLoader(item=StockInfoItem(), selector=Selector(text=row))
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('date', self.date)

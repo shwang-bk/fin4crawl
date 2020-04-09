@@ -4,17 +4,17 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst
 
-from exchanges.twse.items import StockBranchItem
+from exchanges.twse.items import BranchSettlementItem
 from exchanges.twse.handlers import StockBranchHandler as Handler
 
 
-class StockBranchSpider(scrapy.Spider):
-    name = 'twse_stock_branch'
+class BranchSettlementSpider(scrapy.Spider):
+    name = 'twse_branch_settlement'
     allowed_domains = ['bsr.twse.com.tw']
     date = datetime.date.today().strftime("%Y%m%d")
 
     def __init__(self, *args, **kwargs):
-        super(StockBranchSpider, self).__init__(*args, **kwargs)
+        super(BranchSettlementSpider, self).__init__(*args, **kwargs)
         self.processed = self.total = []
 
     def start_requests(self):
@@ -60,8 +60,8 @@ class StockBranchSpider(scrapy.Spider):
         self.logger.info(f"({len(self.processed)}/{len(self.total)}) {response.meta['symbol']} [{len(rows)} rows]")
 
     def parse_raw(self, symbol, raw):
-        terms = StockBranchItem.terms()
-        loader = ItemLoader(item=StockBranchItem())
+        terms = BranchSettlementItem.Meta.fields
+        loader = ItemLoader(item=BranchSettlementItem())
         loader.default_input_processor = MapCompose(str, str.strip)
         loader.default_output_processor = TakeFirst()
         loader.add_value('date', self.date)

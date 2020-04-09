@@ -5,11 +5,11 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, SelectJmes
 
-from exchanges.twse.items import StockQuoteItem
+from exchanges.twse.items import QuoteItem
 
 
-class StockQuoteSpider(scrapy.Spider):
-    name = 'twse_stock_quote'
+class QuoteSpider(scrapy.Spider):
+    name = 'twse_quote'
     allowed_domains = ['www.twse.com.tw']
     date = datetime.date.today().strftime("%Y%m%d")
 
@@ -22,14 +22,14 @@ class StockQuoteSpider(scrapy.Spider):
 
     def parse(self, response):
         self.logger.info('%s', response.url)
-        terms = StockQuoteItem.terms()
+        terms = QuoteItem.Meta.fields
         jresp = json.loads(response.body_as_unicode())
         data = SelectJmes('data9')(jresp)
         if not data:
             return
         date = SelectJmes('date')(jresp)
         for row in data:
-            loader = ItemLoader(item=StockQuoteItem())
+            loader = ItemLoader(item=QuoteItem())
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('date', date)

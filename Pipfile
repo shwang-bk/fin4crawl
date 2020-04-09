@@ -13,6 +13,7 @@ opencv-python = "*"
 pytesseract = "*"
 jmespath = "*"
 dataset = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"
