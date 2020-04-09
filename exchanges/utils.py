@@ -31,20 +31,20 @@ class ItemParser:
 
     @staticmethod
     def p_date(text):
-        return datetime.datetime.strptime(text, "%Y%m%d")
+        return datetime.datetime.strptime(text, "%Y%m%d").date()
 
     @staticmethod
     def p_date_slash(text):
-        return datetime.datetime.strptime(text, "%Y/%m/%d")
+        return datetime.datetime.strptime(text, "%Y/%m/%d").date()
 
     @staticmethod
     def p_date_underscore(text):
-        return datetime.datetime.strptime(text, "%Y_%m_%d")
+        return datetime.datetime.strptime(text, "%Y_%m_%d").date()
 
     @staticmethod
     def p_date_minguo(text):
         text = text.split('/')
-        return datetime.datetime(int(text[0]) + 1911, int(text[1]), int(text[2]))
+        return datetime.datetime(int(text[0]) + 1911, int(text[1]), int(text[2])).date()
 
     @staticmethod
     def p_time(text):
