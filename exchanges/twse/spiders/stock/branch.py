@@ -2,7 +2,7 @@ import datetime
 
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import MapCompose, TakeFirst
+from itemloaders.processors import MapCompose, TakeFirst
 
 from exchanges.twse.items import BranchSettlementItem
 from exchanges.twse.handlers import StockBranchHandler as Handler

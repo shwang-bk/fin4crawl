@@ -4,7 +4,7 @@ import datetime
 import scrapy
 from scrapy import Selector
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import MapCompose, TakeFirst
+from itemloaders.processors import MapCompose, TakeFirst
 
 from exchanges.taifex.items import FutureCodeItem
 

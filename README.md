@@ -33,7 +33,6 @@ twse_warrant_info   # 權證資訊
 
 ## 爬取資料
 
-爬取後資料會存至 fin4crawl.db ，請再自行使用相關 SQLite Browser 開啟使用
 ```sh
-$ pipenv run scrapy crawl twse_stock_quote -a date=20200325 -o fin4crawl.db -t sqlite
+$ pipenv run scrapy crawl twse_stock_quote -a date=20200325 -o quote_20200325.csv
 ```

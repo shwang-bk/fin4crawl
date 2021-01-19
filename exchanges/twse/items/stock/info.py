@@ -1,5 +1,5 @@
 import scrapy
-from scrapy.loader.processors import MapCompose
+from itemloaders.processors import MapCompose
 
 from exchanges.utils import ItemParser
 
