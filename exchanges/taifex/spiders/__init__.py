@@ -1,1 +1,1 @@
-from .future.code import FutureCodeSpider
+from .stock_lists import StockListsSpider
