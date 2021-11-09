@@ -5,6 +5,10 @@ from decimal import Decimal
 
 class ItemParser:
     @staticmethod
+    def skip_cjk(text):
+        return re.sub(r'[^0-9A-Za-z]+', '', text)
+    
+    @staticmethod
     def p_flag(text):
         return True if 'Y' in text else False
 

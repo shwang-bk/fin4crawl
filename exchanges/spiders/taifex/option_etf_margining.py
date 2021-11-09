@@ -6,41 +6,40 @@ from itemloaders.processors import MapCompose, TakeFirst
 from exchanges.utils import ItemParser
 
 
-class FutureStockMarginingItem(scrapy.Item):
+class OptionETFMarginingItem(scrapy.Item):
     Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk, ItemParser.p_date))  # 資料日期
     StockFutureSymbol = scrapy.Field()  # 股票期貨英文代碼
     StockSymbol = scrapy.Field()  # 股票期貨標的證券代號
     StockFutureZH = scrapy.Field()  # 股票期貨中文簡稱
     StockZH = scrapy.Field()  # 股票期貨標的證券
-    MarginClassInterval = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk))  # 保證金所屬級距
-    SettlementMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_rate))  # 結算保證金適用比例
-    MaintainMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_rate))  # 維持保證金適用比例
-    InitialMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_rate))  # 原始保證金適用比例
+    SettlementMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_num))  # 結算保證金
+    MaintainMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_num))  # 維持保證金
+    InitialMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_num))  # 原始保證金
     
     fields_to_export = [
         'StockFutureSymbol', 'StockSymbol', 'StockFutureZH', 'StockZH',
-        'MarginClassInterval', 'SettlementMargin', 'MaintainMargin', 'InitialMargin'
+        'SettlementMargin', 'MaintainMargin', 'InitialMargin'
     ]
     
     @property
     def filename(self):
-        return f'{self["Date"].strftime("%Y%m%d")}_stockMargining_Stock_Future.csv'
+        return f'{self["Date"].strftime("%Y%m%d")}_stockMargining_ETF_Future.csv'
+    
 
-
-class FutureStockMarginingSpider(scrapy.Spider):
-    name = 'taifex_future_stock_margining'
+class OptionETFMarginingSpider(scrapy.Spider):
+    name = 'taifex_option_etf_margining'
     allowed_domains = ['www.taifex.com.tw']
     x_paths = [
         ('StockFutureSymbol', '//td[2]/text()'),
         ('StockSymbol', '//td[3]/text()'),
         ('StockFutureZH', '//td[4]/text()'),
         ('StockZH', '//td[5]/text()'),
-        ('MarginClassInterval', '//td[6]/text()'),
-        ('SettlementMargin', '//td[7]/text()'),
-        ('MaintainMargin', '//td[8]/text()'),
-        ('InitialMargin', '//td[9]/text()'),
+        ('SettlementMargin', '//td[6]/text()'),
+        ('MaintainMargin', '//td[7]/text()'),
+        ('InitialMargin', '//td[8]/text()'),
     ]
     fields_to_export = [item[0] for item in x_paths]
+    file_name = '{}_stockMargining_ETF_Future.csv'
 
     def start_requests(self):
         yield scrapy.Request(
@@ -48,10 +47,10 @@ class FutureStockMarginingSpider(scrapy.Spider):
             self.parse)
 
     def parse(self, response):
-        Date = response.xpath('//*[@id="printhere"]/div[1]/p[1]/span/text()').get()
-        rows = response.xpath('//*[@id="printhere"]/div[1]/table[1]//tr[count(td)=9]').extract()
+        Date = response.xpath('//*[@id="printhere"]/div[1]/div/p[5]/span/text()').get()
+        rows = response.xpath('//*[@id="printhere"]/div[1]/div/table[2]//tr[count(td)=8]').extract()
         for row in rows:
-            loader = ItemLoader(item=FutureStockMarginingItem(), selector=Selector(text=row))
+            loader = ItemLoader(item=OptionETFMarginingItem(), selector=Selector(text=row))
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
             loader.add_value('Date', Date)

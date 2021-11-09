@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-
 import scrapy
 from scrapy import Selector
 from scrapy.loader import ItemLoader
@@ -8,7 +6,8 @@ from itemloaders.processors import MapCompose, TakeFirst
 from exchanges.utils import ItemParser
 
 
-class ETFMarginingItem(scrapy.Item):
+class FutureETFMarginingItem(scrapy.Item):
+    Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk, ItemParser.p_date))  # 資料日期
     StockFutureSymbol = scrapy.Field()  # 股票期貨英文代碼
     StockSymbol = scrapy.Field()  # 股票期貨標的證券代號
     StockFutureZH = scrapy.Field()  # 股票期貨中文簡稱
@@ -17,40 +16,44 @@ class ETFMarginingItem(scrapy.Item):
     MaintainMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_num))  # 維持保證金
     InitialMargin = scrapy.Field(input_processor=MapCompose(ItemParser.p_num))  # 原始保證金
     
-    class Meta:
-        fields_to_export = [
-            'StockFutureSymbol', 'StockSymbol', 'StockFutureZH', 'StockZH',
-            'SettlementMargin', 'MaintainMargin', 'InitialMargin'
-        ]
+    fields_to_export = [
+        'StockFutureSymbol', 'StockSymbol', 'StockFutureZH', 'StockZH',
+        'SettlementMargin', 'MaintainMargin', 'InitialMargin'
+    ]
+    
+    @property
+    def filename(self):
+        return f'{self["Date"].strftime("%Y%m%d")}_stockMargining_ETF_Future.csv'
     
 
-class ETFMarginingSpider(scrapy.Spider):
+class FutureETFMarginingSpider(scrapy.Spider):
     name = 'taifex_future_etf_margining'
     allowed_domains = ['www.taifex.com.tw']
-    date = datetime.date.today().strftime("%Y%m%d")
+    x_paths = [
+        ('StockFutureSymbol', '//td[2]/text()'),
+        ('StockSymbol', '//td[3]/text()'),
+        ('StockFutureZH', '//td[4]/text()'),
+        ('StockZH', '//td[5]/text()'),
+        ('SettlementMargin', '//td[6]/text()'),
+        ('MaintainMargin', '//td[7]/text()'),
+        ('InitialMargin', '//td[8]/text()'),
+    ]
+    fields_to_export = [item[0] for item in x_paths]
+    file_name = '{}_stockMargining_ETF_Future.csv'
 
     def start_requests(self):
-        self.logger.info(f'Parsing date: {self.date}')
         yield scrapy.Request(
             'https://www.taifex.com.tw/cht/5/stockMargining',
             self.parse)
 
     def parse(self, response):
-        x_paths = [
-            ('StockFutureSymbol', '//td[2]/text()'),
-            ('StockSymbol', '//td[3]/text()'),
-            ('StockFutureZH', '//td[4]/text()'),
-            ('StockZH', '//td[5]/text()'),
-            ('SettlementMargin', '//td[6]/text()'),
-            ('MaintainMargin', '//td[7]/text()'),
-            ('InitialMargin', '//td[8]/text()'),
-        ]
-        
+        Date = response.xpath('//*[@id="printhere"]/div[1]/p[4]/span/text()').get()
         rows = response.xpath('//*[@id="printhere"]/div[1]/table[2]//tr[count(td)=8]').extract()
         for row in rows:
-            loader = ItemLoader(item=ETFMarginingItem(), selector=Selector(text=row))
+            loader = ItemLoader(item=FutureETFMarginingItem(), selector=Selector(text=row))
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
-            for field, path in x_paths:
+            loader.add_value('Date', Date)
+            for field, path in self.x_paths:
                 loader.add_xpath(field, path)
             yield loader.load_item()
