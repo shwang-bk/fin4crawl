@@ -1,5 +1,6 @@
 import re
 import datetime
+from decimal import Decimal
 
 
 class ItemParser:
@@ -10,6 +11,20 @@ class ItemParser:
     @staticmethod
     def p_sign(text):
         return -1 if '-' in text else 1
+    
+    @staticmethod
+    def p_circle_sign(text):
+        for sign in  ('◎', '●'):
+            if sign in text:
+                return True
+        return False
+
+    @staticmethod
+    def p_rate(text):
+        if '%' in text:
+            text = re.sub(r'[% ]+', '', text)
+            return Decimal(text) / 100
+        return Decimal(0)
 
     @staticmethod
     def p_num(text):

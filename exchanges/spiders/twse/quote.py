@@ -27,7 +27,6 @@ class QuoteItem(scrapy.Item):
     pe_ratio = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, float))  # 本益比
 
     class Meta:
-        name = 'twse_quote'
         fields = [
             'code', 'name', 'shares', 'count', 'amount',
             'open', 'high', 'low', 'close', 'change_sign', 'change',

@@ -27,7 +27,6 @@ class MarginTradingItem(scrapy.Item):
     short_deposit_limit = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, int))  # 融券限額
 
     class Meta:
-        name = 'twse_margin_trading'
         fields = [
             'code', 'name',
             'long', 'long_flat', 'long_flat_repayment',
@@ -35,7 +34,6 @@ class MarginTradingItem(scrapy.Item):
             'short_flat', 'short', 'short_flat_repayment',
             'short_deposit_last', 'short_deposit', 'short_deposit_limit'
         ]
-
 
 
 class MarginTradingSpider(scrapy.Spider):

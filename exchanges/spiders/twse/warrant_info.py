@@ -25,7 +25,6 @@ class WarrantInfoItem(scrapy.Item):
     strike_price = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, float))  # 最新履約價格
 
     class Meta:
-        name = 'twse_warrant_info'
         fields = [
             'code', 'name', 'style', 'put_call', 'broker', None, 'price', 'listing_date',
             'close_date', 'delivery_date', None, 'publish_shares', 'underlying', None,

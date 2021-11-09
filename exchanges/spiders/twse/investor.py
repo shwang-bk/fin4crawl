@@ -35,7 +35,6 @@ class InvestorTradingItem(scrapy.Item):
     net = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, int))  # 三大法人買賣超股數
 
     class Meta:
-        name = 'twse_investor_trading'
         fields = [
             'code', 'name', 'foreign_buy', 'foreign_sell', 'foreign_net',
             'foreign_dealer_buy', 'foreign_dealer_sell', 'foreign_dealer_net',

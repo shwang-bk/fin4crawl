@@ -11,7 +11,7 @@
 
 BOT_NAME = 'exchanges'
 
-SPIDER_MODULES = ['exchanges.twse.spiders', 'exchanges.taifex.spiders']
+SPIDER_MODULES = ['exchanges.spiders']
 # NEWSPIDER_MODULE = 'exchanges.spiders'
 
 

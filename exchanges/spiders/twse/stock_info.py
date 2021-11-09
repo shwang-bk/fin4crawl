@@ -14,9 +14,9 @@ class StockInfoItem(scrapy.Item):
     name = scrapy.Field()  # 股票名稱
     publish_shares = scrapy.Field(input_processor=MapCompose(ItemParser.p_num, int))  # 已發行普通股數
     listing_date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.p_date_minguo))  # 掛牌日
-
+    
     class Meta:
-        name = 'twse_stock_info'
+        pass
 
 
 class StockInfoSpider(scrapy.Spider):
