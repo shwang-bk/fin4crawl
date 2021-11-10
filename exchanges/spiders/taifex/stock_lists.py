@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-
 import scrapy
 from scrapy import Selector
 from scrapy.loader import ItemLoader
@@ -9,7 +7,7 @@ from exchanges.utils import ItemParser
 
 
 class StockListsItem(scrapy.Item):
-    Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.p_date))  # 資料日期
+    Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk, ItemParser.p_date_slash))  # 資料日期
     SymbolPrefix = scrapy.Field()  # 股票期貨、選擇權商品代碼
     StockZH = scrapy.Field()  # 標的證券
     StockSymbol = scrapy.Field()  # 證券代號
@@ -49,16 +47,17 @@ class StockListsSpider(scrapy.Spider):
     ]
     
     def start_requests(self):
-        yield scrapy.Request(
-            'https://www.taifex.com.tw/cht/2/stockLists',
-            self.parse)
+        yield scrapy.Request('https://www.taifex.com.tw/cht/2/stockLists', self.parse)
 
     def parse(self, response):
         rows = response.xpath('//tr[count(td)=10]').extract()
+        Date = response.xpath('/html/body/div[2]/div/div/div/div[2]/p[1]/text()').get()
+        Date = Date.replace('年', '/').replace('月', '/')
         for row in rows:
             loader = ItemLoader(item=StockListsItem(), selector=Selector(text=row))
             loader.default_input_processor = MapCompose(str, str.strip)
             loader.default_output_processor = TakeFirst()
+            loader.add_value('Date', Date)
             for field, path in self.x_paths:
                 loader.add_xpath(field, path)
             yield loader.load_item()

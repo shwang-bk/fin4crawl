@@ -7,7 +7,7 @@ from exchanges.utils import ItemParser
 
 
 class FutureStockMarginingItem(scrapy.Item):
-    Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk, ItemParser.p_date))  # 資料日期
+    Date = scrapy.Field(input_processor=MapCompose(str.strip, ItemParser.skip_cjk, ItemParser.p_date_slash))  # 資料日期
     StockFutureSymbol = scrapy.Field()  # 股票期貨英文代碼
     StockSymbol = scrapy.Field()  # 股票期貨標的證券代號
     StockFutureZH = scrapy.Field()  # 股票期貨中文簡稱
@@ -40,12 +40,9 @@ class FutureStockMarginingSpider(scrapy.Spider):
         ('MaintainMargin', '//td[8]/text()'),
         ('InitialMargin', '//td[9]/text()'),
     ]
-    fields_to_export = [item[0] for item in x_paths]
 
     def start_requests(self):
-        yield scrapy.Request(
-            'https://www.taifex.com.tw/cht/5/stockMargining',
-            self.parse)
+        yield scrapy.Request('https://www.taifex.com.tw/cht/5/stockMargining', self.parse)
 
     def parse(self, response):
         Date = response.xpath('//*[@id="printhere"]/div[1]/p[1]/span/text()').get()
