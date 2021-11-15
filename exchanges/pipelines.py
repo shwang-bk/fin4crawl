@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from scrapy.exporters import CsvItemExporter
 
 class CsvItemPipeline:
@@ -6,10 +9,14 @@ class CsvItemPipeline:
         self.exporters = {}
 
     def close_spider(self, spider):
+        
         for exporter in self.exporters.values():
             exporter.finish_exporting()
         for file in self.files:
             file.close()
+            new_path = os.path.join(spider.target_dir, file.name)
+            shutil.move(file.name, new_path)
+            
         
     def process_item(self, item, spider):
         exporter = self.exporters.get(item.filename)

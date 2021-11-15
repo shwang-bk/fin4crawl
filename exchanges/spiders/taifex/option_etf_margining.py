@@ -35,6 +35,12 @@ class OptionETFMarginingItem(scrapy.Item):
 class OptionETFMarginingSpider(scrapy.Spider):
     name = 'taifex_option_etf_margining'
     allowed_domains = ['www.taifex.com.tw']
+    custom_settings = {
+        "ITEM_PIPELINES": {
+            'exchanges.pipelines.CsvItemPipeline': 300
+        },
+    }
+    target_dir = '/mnt/tpe-nas-l1/marketdata/info/TAIFEX/OfficialSource/Margin/'
     row1_x_paths = [
         ('StockOptionSymbol', '//td[2]/text()'),
         ('StockSymbol', '//td[3]/text()'),

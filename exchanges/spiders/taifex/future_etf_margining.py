@@ -29,6 +29,12 @@ class FutureETFMarginingItem(scrapy.Item):
 class FutureETFMarginingSpider(scrapy.Spider):
     name = 'taifex_future_etf_margining'
     allowed_domains = ['www.taifex.com.tw']
+    custom_settings = {
+        "ITEM_PIPELINES": {
+            'exchanges.pipelines.CsvItemPipeline': 300
+        },
+    }
+    target_dir = '/mnt/tpe-nas-l1/marketdata/info/TAIFEX/OfficialSource/Margin/'
     x_paths = [
         ('StockFutureSymbol', '//td[2]/text()'),
         ('StockSymbol', '//td[3]/text()'),

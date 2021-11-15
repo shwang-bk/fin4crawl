@@ -68,9 +68,9 @@ DOWNLOAD_TIMEOUT = 5
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'exchanges.pipelines.CsvItemPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#    'exchanges.pipelines.CsvItemPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -93,5 +93,5 @@ AUTOTHROTTLE_MAX_DELAY = 60
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-LOG_FILE = 'fin4crawl.log'
+# LOG_FILE = 'fin4crawl.log'
 LOG_LEVEL = 'INFO'

@@ -33,6 +33,12 @@ class StockListsItem(scrapy.Item):
 class StockListsSpider(scrapy.Spider):
     name = 'taifex_stock_lists'
     allowed_domains = ['www.taifex.com.tw']
+    custom_settings = {
+        "ITEM_PIPELINES": {
+            'exchanges.pipelines.CsvItemPipeline': 300
+        },
+    }
+    target_dir = '/mnt/tpe-nas-l1/marketdata/info/TAIFEX/OfficialSource/stockLists/'
     x_paths = [
         ('SymbolPrefix', '//td[1]/text()'),
         ('StockZH', '//td[2]/text()'),
