@@ -21,7 +21,7 @@ class StockListsItem(scrapy.Item):
     
     fields_to_export = [
         'SymbolPrefix', 'StockZH', 'StockSymbol', 'StockAbbreviationZH',
-        'HasStockFuture', 'HasStockOption', 'IsETStock', 'IsOTCStock'
+        'HasStockFuture', 'HasStockOption', 'IsETStock', 'IsOTCStock',
         'IsETETF', 'NotionalFactor'
     ]
     
